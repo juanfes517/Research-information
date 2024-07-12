@@ -10,7 +10,7 @@
   env\Scripts\activate
   ```
 
-- Instalar las siguientes dependencias:
+- Instalar dependencias:
   ```
   pip install selenium
   ```
