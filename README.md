@@ -10,17 +10,13 @@
   env\Scripts\activate
   ```
 
-- Instalar selenium:
+- Instalar las siguientes dependencias:
   ```
   pip install selenium
   ```
-
-- Instalar webdriver-manager:
   ```
   pip install webdriver-manager
   ```
-
-- Instalar pandas:
   ```
   pip install pandas
   ```
