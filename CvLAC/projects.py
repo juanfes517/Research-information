@@ -21,14 +21,24 @@ def CvLAC_projects(dataframe, docente):
   elem.send_keys(docente)
   elem.send_keys(Keys.RETURN)
 
-  sleep(2)
+  # sleep(2)
 
-  # Se obtiene el elemento en la primera posición de la tabla. 
-  # se supone que es la correspondiente al docente
-  elem = driver.find_element(By.XPATH, '//*[@id="investigadores_row1"]/td[2]/a')
+  # Obtiene las dos primers filas de las tablas
+  row_1 = driver.find_element(By.XPATH, '//*[@id="investigadores_row1"]/td[2]/a')
+  row_2 = driver.find_element(By.XPATH, '//*[@id="investigadores_row2"]/td[2]/a')
+
+  # Verifica si una de las dos filas tomadas tiene el nombre del docente
+  if row_1.text == docente:
+    elem = row_1
+  elif row_2.text == docente:
+    elem = row_2
+  else:
+    print('No es igual a ninguno')
+    return
+  
   elem.click()
 
-  sleep(2)
+  # sleep(2)
 
   # Cambia el foco a la nueva pestaña
   driver.switch_to.window(driver.window_handles[1])
@@ -46,9 +56,6 @@ def CvLAC_projects(dataframe, docente):
       i = i+1
     except Exception  as e:
       break
-
-  # for i in proyectos[0].text:
-  #   print(i)
   
 def getValues(text):
   # Expresiones regulares para extraer cada parte
@@ -78,12 +85,3 @@ def getValues(text):
   values = [tipo_proyecto, nombre_proyecto, inicio, fin, resumen]
 
   return values
-
-  # # Imprimir los resultados
-  # print(f"Tipo de proyecto: {tipo_proyecto}")
-  # print(f"Nombre del proyecto: {nombre_proyecto}")
-  # print(f"Inicio: {inicio}")
-  # print(f"Fin: {fin}")
-  # # print(f"Duración: {duracion}")
-  # print(f"Resumen: {resumen}")
-  # print('---------------------------------------------------------')
