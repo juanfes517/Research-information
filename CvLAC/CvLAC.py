@@ -46,15 +46,40 @@ def scrape_CvLAC(df_projects, df_articles, df_chaptersBooks, docentes):
     driver.switch_to.window(driver.window_handles[1])
     
     i = 2
-
     # Obtiene todos los proyectos
     while True:
       try:
         xpath = f'/html/body/div/div[3]/table/tbody/tr[86]/td/table/tbody/tr[{i}]/td/blockquote'
         proyecto = driver.find_element(By.XPATH, xpath)
-        values = getValues(proyecto.text)
+        values = getValuesProjects(proyecto.text)
         values.insert(0, docente)
         df_projects.loc[len(df_projects)] = values
+        i = i+1
+      except Exception  as e:
+        break
+
+    i = 3
+    # Obtiene todos los articulos
+    while True:
+      try:
+        xpath = f'/html/body/div/div[3]/table/tbody/tr[37]/td/table/tbody/tr[{i}]/td/blockquote'
+        articulo = driver.find_element(By.XPATH, xpath)
+        values = getValuesArticles(articulo.text)
+        values.insert(0, docente)
+        df_articles.loc[len(df_articles)] = values
+        i = i+2
+      except Exception  as e:
+        break
+    
+    i = 2
+    # Obtiene todos los capitulos de libros
+    while True:
+      try:
+        xpath = f'/html/body/div/div[3]/table/tbody/tr[39]/td/table/tbody/tr[{i}]/td/li/blockquote'
+        chapter = driver.find_element(By.XPATH, xpath)
+        values = getValuesChapters(chapter.text)
+        values.insert(0, docente)
+        df_chaptersBooks.loc[len(df_chaptersBooks)] = values
         i = i+1
       except Exception  as e:
         break
@@ -66,7 +91,7 @@ def scrape_CvLAC(df_projects, df_articles, df_chaptersBooks, docentes):
   
   driver.quit()
 
-def getValues(text):
+def getValuesProjects(text):
   # Expresiones regulares para extraer cada parte
   regex_tipo_proyecto = r"Tipo de proyecto:\s*(.*)"
   regex_nombre_proyecto = r"Tipo de proyecto:.*?\n(.*)"
@@ -88,9 +113,71 @@ def getValues(text):
   nombre_proyecto = nombre_proyecto.group(1) if nombre_proyecto else ""
   inicio = inicio.group(1) if inicio else ""
   fin = fin.group(1) if fin else ""
-  # duracion = duracion.group(1).strip() if duracion else ""
   resumen = resumen.group(1).strip() if resumen else ""
 
-  values = [tipo_proyecto, nombre_proyecto, inicio, fin, resumen]
+  return [tipo_proyecto, nombre_proyecto, inicio, fin, resumen]
 
-  return values
+def getValuesArticles(text):
+
+  # Encontrar el índice de "Palabras:"
+  indice = text.find('Palabras:')
+
+  # Si "Palabras:" está en el texto, cortarlo hasta ese punto
+  if indice != -1:
+      text = text[:indice]
+
+  # Patrón para encontrar el nombre del artículo (entre comillas)
+  article_title_pattern = r'"(.*?)"'
+  # Patrón para encontrar el país (después de "En:" y antes del nombre de la revista, opcional)
+  country_pattern = r'En:\s*(\w+\s*)?(?=\n)'
+  # Patrón para encontrar el nombre de la revista (entre "En:" opcional país y "ISSN:")
+  journal_name_pattern = r'En:\s*(?:\w+\s*)?\n(.*?)\s*ISSN:'
+  # Patrón para encontrar el año de publicación (después del número de páginas y la coma)
+  year_pattern = r',(\d{4}),'
+  # Patrón para encontrar las páginas (entre "p." y la coma)
+  pages_pattern = r'p\.(.*?)\s*,'
+  # Patrón para encontrar la editorial (entre "ed:" y "v.")
+  editorial_pattern = r'ed:\s*(.*?)\s*v\.'
+  # Patrón para encontrar el DOI (después de "DOI:" o "doi:")
+  doi_pattern = r'DOI:\s*(.*)'
+
+  # Buscar los patrones en la citación
+  article_title_match = re.search(article_title_pattern, text)
+  country_match = re.search(country_pattern, text)
+  journal_name_match = re.search(journal_name_pattern, text)
+  year_match = re.search(year_pattern, text)
+  pages_match = re.search(pages_pattern, text)
+  editorial_match = re.search(editorial_pattern, text)
+  doi_match = re.search(doi_pattern, text)
+
+  # Extraer los valores si los patrones se encontraron
+  article_title = article_title_match.group(1) if article_title_match else None
+  country = country_match.group(1).strip() if country_match and country_match.group(1) else None
+  journal_name = journal_name_match.group(1).strip() if journal_name_match else None
+  publication_year = year_match.group(1) if year_match else None
+  pages = pages_match.group(1).strip() if pages_match else None
+  editorial = editorial_match.group(1).strip() if editorial_match else None
+  doi = doi_match.group(1).strip() if doi_match else None
+
+  return [article_title, country, journal_name, publication_year, pages, editorial, doi]
+
+def getValuesChapters(text):
+  # Extraer nombre del capítulo (lo que está entre comillas)
+  nombre_capitulo = re.search(r'"([^"]*)"', text).group(1)
+
+  # Extraer nombre del libro (entre comillas y "En:")
+  nombre_libro = re.search(r'"[^"]*"\s*([^\.]*)\. En:', text).group(1).strip()
+
+  # Extraer país (entre "En:" e "ISBN")
+  pais = re.search(r'En:\s*([^I]*)ISBN:', text).group(1).strip()
+
+  # Extraer año (después de la última coma)
+  año = re.search(r',(\d{4})', text).group(1)
+
+  # Extraer editorial (entre "ed:" y "v.")
+  editorial = re.search(r'ed:\s*([^,]*)', text).group(1).strip()
+
+  # Extraer páginas 
+  paginas = re.search(r'p\.(.*?)\s*,', text).group(1).strip()
+
+  return [nombre_capitulo, nombre_libro, pais, año, editorial, paginas]
