@@ -117,8 +117,8 @@ def getValuesProjects(text):
 
   return [tipo_proyecto, nombre_proyecto, inicio, fin, resumen]
 
-def getValuesArticles(text):
 
+def getValuesArticles(text):
   # Encontrar el índice de "Palabras:"
   indice = text.find('Palabras:')
 
@@ -140,6 +140,8 @@ def getValuesArticles(text):
   editorial_pattern = r'ed:\s*(.*?)\s*v\.'
   # Patrón para encontrar el DOI (después de "DOI:" o "doi:")
   doi_pattern = r'DOI:\s*(.*)'
+  # Patrón para encontrar el ISSN (entre "ISSN:" y "ed:")
+  issn_pattern = r'ISSN:\s*(.*?)\s*ed:'
 
   # Buscar los patrones en la citación
   article_title_match = re.search(article_title_pattern, text)
@@ -149,6 +151,7 @@ def getValuesArticles(text):
   pages_match = re.search(pages_pattern, text)
   editorial_match = re.search(editorial_pattern, text)
   doi_match = re.search(doi_pattern, text)
+  issn_match = re.search(issn_pattern, text)
 
   # Extraer los valores si los patrones se encontraron
   article_title = article_title_match.group(1) if article_title_match else None
@@ -158,26 +161,43 @@ def getValuesArticles(text):
   pages = pages_match.group(1).strip() if pages_match else None
   editorial = editorial_match.group(1).strip() if editorial_match else None
   doi = doi_match.group(1).strip() if doi_match else None
+  issn = issn_match.group(1).strip() if issn_match else None
 
-  return [article_title, country, journal_name, publication_year, pages, editorial, doi]
+  return [article_title, country, journal_name, publication_year, pages, editorial, doi, issn]
+
 
 def getValuesChapters(text):
-  # Extraer nombre del capítulo (lo que está entre comillas)
-  nombre_capitulo = re.search(r'"([^"]*)"', text).group(1)
+  # Patrón para encontrar el nombre del capítulo (entre comillas)
+  chapter_title_pattern = r'"(.*?)"'
+  # Patrón para encontrar el nombre del libro (entre el capítulo y "En:")
+  book_name_pattern = r'"[^"]*"\s*(.*?)\s*En:'
+  # Patrón para encontrar el país (después de "En:" y antes de "ISBN:")
+  country_pattern = r'En:\s*(.*?)\s*ISBN:'
+  # Patrón para encontrar el año de publicación (después de la coma y antes de la palabra "ed")
+  year_pattern = r',(\d{4})'
+  # Patrón para encontrar la editorial (después de "ed:" y antes de "v.")
+  editorial_pattern = r'ed:\s*(.*?)\s*,'
+  # Patrón para encontrar las páginas (entre "p." y la coma)
+  pages_pattern = r'p\.(.*?)\s*,'
+  # Patrón para encontrar el ISBN (entre "ISBN:" y "ed:")
+  isbn_pattern = r'ISBN:\s*([^ ]+)'
 
-  # Extraer nombre del libro (entre comillas y "En:")
-  nombre_libro = re.search(r'"[^"]*"\s*([^\.]*)\. En:', text).group(1).strip()
+  # Buscar los patrones en la citación
+  chapter_title_match = re.search(chapter_title_pattern, text)
+  book_name_match = re.search(book_name_pattern, text)
+  country_match = re.search(country_pattern, text)
+  year_match = re.search(year_pattern, text)
+  editorial_match = re.search(editorial_pattern, text)
+  pages_match = re.search(pages_pattern, text)
+  isbn_match = re.search(isbn_pattern, text)
 
-  # Extraer país (entre "En:" e "ISBN")
-  pais = re.search(r'En:\s*([^I]*)ISBN:', text).group(1).strip()
+  # Extraer los valores si los patrones se encontraron
+  chapter_title = chapter_title_match.group(1) if chapter_title_match else None
+  book_name = book_name_match.group(1).strip() if book_name_match else None
+  country = country_match.group(1).strip() if country_match else None
+  publication_year = year_match.group(1) if year_match else None
+  editorial = editorial_match.group(1).strip() if editorial_match else None
+  pages = pages_match.group(1).strip() if pages_match else None
+  isbn = isbn_match.group(1).strip() if isbn_match else None
 
-  # Extraer año (después de la última coma)
-  año = re.search(r',(\d{4})', text).group(1)
-
-  # Extraer editorial (entre "ed:" y "v.")
-  editorial = re.search(r'ed:\s*([^,]*)', text).group(1).strip()
-
-  # Extraer páginas 
-  paginas = re.search(r'p\.(.*?)\s*,', text).group(1).strip()
-
-  return [nombre_capitulo, nombre_libro, pais, año, editorial, paginas]
+  return [chapter_title, book_name, country, publication_year, editorial, pages, isbn]
