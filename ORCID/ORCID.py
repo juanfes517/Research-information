@@ -1,15 +1,15 @@
+import numpy as np
 import unicodedata
-import bibtexparser
 from time import sleep
 from selenium import webdriver
-import numpy as np
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.action_chains import ActionChains
+from ORCID.Extract_info import extract_books, extract_chaptersBooks
 
-def scrape_ORCID(docentes):
+def scrape_ORCID(df_books, df_chaptersBooks, docentes):
   # Inicializa el driver de Chrome
   service = Service(ChromeDriverManager().install())
   driver = webdriver.Chrome(service=service)
@@ -42,7 +42,6 @@ def scrape_ORCID(docentes):
 
       # Se continua la busqueda si el por lo menos el nombre o apellido del 
       # docente coincide y se tiene la universidad en la afiliación
-
       match_name = normalizar(first_name.text) in normalizar(docente) or normalizar(last_name.text) in normalizar(docente)
       match_afiliation = normalizar('Universidad de Antioquia') in normalizar(afiliation.text) or normalizar('University of Antioquia') in normalizar(afiliation.text)
       
@@ -61,6 +60,9 @@ def scrape_ORCID(docentes):
 
     i = 1
     while True:
+
+      type_text = ''
+
       try:
         type_html = driver.find_element(By.XPATH, f'//*[@id="cy-works-panels"]/div[2]/app-work-stack[{i}]/app-panel/div[2]/app-work/app-panel-data/div/div[1]/div/div[2]')
         
@@ -70,12 +72,19 @@ def scrape_ORCID(docentes):
         # Tomar la parte después de '|'
         type_text = partes[1].strip()
 
+        date_text = partes[0].strip()
+        year_text = date_text.split('-')[0].strip()
+
         # tipos_trabajos = np.append(tipos_trabajos, type_text)
         # print(docente, ':', type_text)
-        
-        # TODO: Hacer algo diferente segun el tipo
+
+        if type_text != 'Conference paper':
+          i = i+1
+          continue
+        # else:
+        #   print(docente, type_text, '----', year_text)
+
       except Exception as e:
-        # print(e)
         break
 
       # Presiona "Show more detail"
@@ -115,7 +124,18 @@ def scrape_ORCID(docentes):
         try: 
           xpath = f'//*[@id="cy-works-panels"]/div[2]/app-work-stack[{i}]/app-panel/div[2]/app-work/app-panel-data[2]/div/div[1]/app-display-attribute[{j}]/div/div[2]/div/pre'
           cita = driver.find_element(By.XPATH, xpath)
-          getValues(cita.text)
+
+          if type_text == 'Book':
+            values = extract_books(cita.text)
+            values.insert(0, docente)
+            df_books.loc[len(df_books)] = values
+          elif type_text == 'Book chapter':
+            values = extract_chaptersBooks(cita.text)
+            values.insert(0, docente)
+            df_chaptersBooks.loc[len(df_chaptersBooks)] = values
+
+          print(cita.text)
+
           break
         except Exception as e:
           if j == 5:
@@ -133,38 +153,6 @@ def scrape_ORCID(docentes):
   print(np.unique(tipos_trabajos))
   driver.quit()
 
-
-def getValues(text):
-  bib_database = bibtexparser.loads(text)
-
-  # Extract the information
-  for entry in bib_database.entries:
-    doi = quitar_caracteres(entry.get('doi', ''))
-    url = quitar_caracteres(entry.get('url', ''))
-    year = quitar_caracteres(entry.get('year', ''))
-    month = quitar_caracteres(entry.get('month', ''))
-    publisher = quitar_caracteres(entry.get('publisher', ''))
-    volume = quitar_caracteres(entry.get('volume', ''))
-    number = quitar_caracteres(entry.get('number', ''))
-    author = quitar_caracteres(entry.get('author', ''))
-    title = quitar_caracteres(entry.get('title', ''))
-    journal = quitar_caracteres(entry.get('journal', ''))
-    
-    # Print the extracted information
-    print('-------------------------------')
-    print(f"DOI: {doi}")
-    print(f"URL: {url}")
-    print(f"Year: {year}")
-    print(f"Month: {month}")
-    print(f"Publisher: {publisher}")
-    print(f"Volume: {volume}")
-    print(f"Number: {number}")
-    print(f"Author: {author}")
-    print(f"Title: {title}")
-    print(f"Journal: {journal}")
-    print('-------------------------------')
-
-
 def normalizar(cadena):
   # Convertir a minúsculas
   cadena = cadena.lower()
@@ -177,15 +165,3 @@ def normalizar(cadena):
   )
   return cadena
 
-
-# Quita cierto caracteres de un string
-def quitar_caracteres(text):
-    replacements = {
-        '{': '',
-        '}': '',
-        "'":'',
-        "\\":''
-    }
-    for key, value in replacements.items():
-        text = text.replace(key, value)
-    return text
