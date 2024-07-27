@@ -6,10 +6,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.action_chains import ActionChains
-from ORCID.Extract_info import extract_books, extract_chaptersBooks
+from ORCID.Extract_info import extract_books, extract_chaptersBooks, extract_conferencePaper
 
-def scrape_ORCID(df_books, df_chaptersBooks, docentes):
+
+def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, docentes):
   # Inicializa el driver de Chrome
   service = Service(ChromeDriverManager().install())
   driver = webdriver.Chrome(service=service)
@@ -129,12 +129,17 @@ def scrape_ORCID(df_books, df_chaptersBooks, docentes):
             values = extract_books(cita.text)
             values.insert(0, docente)
             df_books.loc[len(df_books)] = values
-          elif type_text == 'Book chapter':
+          elif type_text == 'Book chapter' or ("title" in cita.text and "booktitle" in cita.text) :
+            # print(cita.text)
             values = extract_chaptersBooks(cita.text)
             values.insert(0, docente)
             df_chaptersBooks.loc[len(df_chaptersBooks)] = values
-
-          print(cita.text)
+          elif type_text == 'Conference paper':
+            values = extract_conferencePaper(cita.text)
+            values.insert(0, docente)
+            df_conferencePaper.loc[len(df_conferencePaper)] = values
+          
+          # print(cita.text)
 
           break
         except Exception as e:

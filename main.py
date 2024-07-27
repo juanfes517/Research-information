@@ -17,14 +17,15 @@ def CvLAC():
 
 def ORCID():
 
-  df_books = pd.DataFrame(columns=["Docente", "Titulo", "Journal", "Año", "Volumen", "paginas", "Autores"])
-  df_chaptersBooks = pd.DataFrame(columns=["Docente", "DOI", "URL", "año", "editorial", "paginas", "autores", "nombre_del_capitulo", "nombre_del_libro"])
+  df_books = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "volumen", "paginas", "autores"])
+  df_chaptersBooks = pd.DataFrame(columns=["docente", "DOI", "URL", "año", "editorial", "paginas", "autores", "nombre_del_capitulo", "nombre_del_libro"])
+  df_conferencePaper = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "volumen", "paginas", "auntores"])
 
-  scrape_ORCID(df_books=df_books, df_chaptersBooks=df_chaptersBooks, docentes=docentes)
+  scrape_ORCID(df_books=df_books, df_chaptersBooks=df_chaptersBooks, df_conferencePaper=df_conferencePaper, docentes=docentes)
 
   df_books.to_csv('resultados/ORCID/books.csv', index=False)
   df_chaptersBooks.to_csv('resultados/ORCID/chaptersBooks.csv', index=False)
+  df_conferencePaper.to_csv('resultados/ORCID/conferencePaper.csv', index=False)
 
 
 ORCID()
-
