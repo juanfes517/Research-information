@@ -6,10 +6,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-from ORCID.Extract_info import extract_books, extract_chaptersBooks, extract_conferencePaper
+from ORCID.Extract_info import extract_books, extract_chaptersBooks, extract_conferencePaper, extract_articles
 
 
-def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, docentes):
+def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, docentes):
   # Inicializa el driver de Chrome
   service = Service(ChromeDriverManager().install())
   driver = webdriver.Chrome(service=service)
@@ -77,12 +77,12 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, docentes):
 
         # tipos_trabajos = np.append(tipos_trabajos, type_text)
         # print(docente, ':', type_text)
-
-        if type_text != 'Conference paper':
+        
+        if type_text != 'Journal issue':
           i = i+1
           continue
-        # else:
-        #   print(docente, type_text, '----', year_text)
+
+        print(docente, '_____', type_text)
 
       except Exception as e:
         break
@@ -102,7 +102,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, docentes):
       except Exception as e:
         driver.execute_script("arguments[0].click();", hide_details)
         print(f"El trabajo {i} de {docente} no tiene cita")
-        print('----------------------------')
+        print('-------------------------------------------------------------')
         i = i+1
         continue
 
@@ -113,7 +113,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, docentes):
       except Exception as e:
         driver.execute_script("arguments[0].click();", hide_details)
         print(f"No se encontro una cita valida para el trabajo: {i} del docente {docente}")
-        print('----------------------------')
+        print('-------------------------------------------------------------')
         i = i+1
         continue
 
@@ -130,7 +130,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, docentes):
             values.insert(0, docente)
             df_books.loc[len(df_books)] = values
           elif type_text == 'Book chapter' or ("title" in cita.text and "booktitle" in cita.text) :
-            # print(cita.text)
+            # print(docente, '____________', cita.text)
             values = extract_chaptersBooks(cita.text)
             values.insert(0, docente)
             df_chaptersBooks.loc[len(df_chaptersBooks)] = values
@@ -138,14 +138,18 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, docentes):
             values = extract_conferencePaper(cita.text)
             values.insert(0, docente)
             df_conferencePaper.loc[len(df_conferencePaper)] = values
-          
-          # print(cita.text)
+          elif type_text == 'Journal article':
+            values = extract_articles(cita.text)
+            values.insert(0, docente)
+            df_articles.loc[len(df_articles)] = values
+            
+          print(cita.text)
 
           break
         except Exception as e:
           if j == 5:
             print(f"ERROR al conseguir la cita en el trabajo: {i} del docente {docente}")
-            print('----------------------------')
+            print('-------------------------------------------------------------')
           continue
 
       driver.execute_script("arguments[0].click();", hide_details)
