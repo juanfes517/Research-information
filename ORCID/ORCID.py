@@ -78,11 +78,11 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
         # tipos_trabajos = np.append(tipos_trabajos, type_text)
         # print(docente, ':', type_text)
         
-        if type_text != 'Journal issue':
-          i = i+1
-          continue
+        # if type_text != 'Report':
+        #   i = i+1
+        #   continue
 
-        print(docente, '_____', type_text)
+        # print(docente, '_____', type_text)
 
       except Exception as e:
         break
@@ -142,8 +142,8 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
             values = extract_articles(cita.text)
             values.insert(0, docente)
             df_articles.loc[len(df_articles)] = values
-            
-          print(cita.text)
+
+          # print(cita.text)
 
           break
         except Exception as e:
