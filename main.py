@@ -1,7 +1,7 @@
-from CvLAC.CvLAC import scrape_CvLAC
-from ORCID.ORCID import scrape_ORCID
 import pandas as pd
 from docentes import docentes
+from CvLAC.CvLAC import scrape_CvLAC
+from ORCID.ORCID import scrape_ORCID
 
 def CvLAC():
   df_projects = pd.DataFrame(columns=["Docente", "Tipo_de_proyecto", "Nombre_del_proyecto", "Inicio", "Fin", "Resumen"])

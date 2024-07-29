@@ -2,6 +2,7 @@ import numpy as np
 import unicodedata
 from time import sleep
 from selenium import webdriver
+from ORCID.Report import Report
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
@@ -21,7 +22,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
   cookies = driver.find_element(By.XPATH, '//*[@id="onetrust-close-btn-container"]/button')
   cookies.click()
 
-  tipos_trabajos = np.array([])
+  reporte = Report()
 
   for docente in docentes:
     input = driver.find_element(By.XPATH, '//*[@id="cy-search"]')
@@ -53,7 +54,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
         no_match = True
 
     if no_match:
-      print('No se encontraron coincidencias para:', docente)
+      reporte.agregar_doncente_no_encontrado(docente)
       continue
 
     sleep(2)
@@ -62,6 +63,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
     while True:
 
       type_text = ''
+      year_text = ''
 
       try:
         type_html = driver.find_element(By.XPATH, f'//*[@id="cy-works-panels"]/div[2]/app-work-stack[{i}]/app-panel/div[2]/app-work/app-panel-data/div/div[1]/div/div[2]')
@@ -75,14 +77,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
         date_text = partes[0].strip()
         year_text = date_text.split('-')[0].strip()
 
-        # tipos_trabajos = np.append(tipos_trabajos, type_text)
-        # print(docente, ':', type_text)
-        
-        # if type_text != 'Report':
-        #   i = i+1
-        #   continue
-
-        # print(docente, '_____', type_text)
+        reporte.agregar_tipo_de_trabajo(type_text)
 
       except Exception as e:
         break
@@ -101,8 +96,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
         driver.execute_script("arguments[0].click();", show_citation)
       except Exception as e:
         driver.execute_script("arguments[0].click();", hide_details)
-        print(f"El trabajo {i} de {docente} no tiene cita")
-        print('-------------------------------------------------------------')
+        reporte.agregar_trabajo_sin_cita(nTrabajo=i, tipo_trabajo=type_text, año_trabajo=year_text, docente=docente)
         i = i+1
         continue
 
@@ -112,8 +106,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
         driver.execute_script("arguments[0].click();", expanded_formatting)
       except Exception as e:
         driver.execute_script("arguments[0].click();", hide_details)
-        print(f"No se encontro una cita valida para el trabajo: {i} del docente {docente}")
-        print('-------------------------------------------------------------')
+        reporte.agregar_cita_no_valida(nTrabajo=i, tipo_trabajo=type_text, año_trabajo=year_text, docente=docente)
         i = i+1
         continue
 
@@ -148,8 +141,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
           break
         except Exception as e:
           if j == 5:
-            print(f"ERROR al conseguir la cita en el trabajo: {i} del docente {docente}")
-            print('-------------------------------------------------------------')
+            reporte.agregar_error_en_cita(nTrabajo=i, tipo_trabajo=type_text, año_trabajo=year_text, docente=docente)
           continue
 
       driver.execute_script("arguments[0].click();", hide_details)
@@ -159,7 +151,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
     sleep(1)
     driver.back()
 
-  print(np.unique(tipos_trabajos))
+  reporte.mostrar_resultados()
   driver.quit()
 
 def normalizar(cadena):
