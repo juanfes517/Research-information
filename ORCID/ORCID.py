@@ -3,11 +3,11 @@ import unicodedata
 from time import sleep
 from selenium import webdriver
 from ORCID.Report import Report
+from ORCID.Extract_info import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-from ORCID.Extract_info import extract_books, extract_chaptersBooks, extract_conferencePaper, extract_articles
 
 
 def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, docentes):
@@ -31,7 +31,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
     input.send_keys(docente)
     input.send_keys(Keys.RETURN)
 
-    sleep(2)
+    sleep(3)
 
     no_match = False
 
@@ -79,6 +79,10 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
 
         reporte.agregar_tipo_de_trabajo(type_text)
 
+        # if type_text != 'Journal article':
+        #   i = i+1
+        #   continue
+
       except Exception as e:
         break
 
@@ -95,8 +99,14 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
         show_citation = driver.find_element(By.XPATH, f'//*[@id="cy-citation-toggle-link"]')
         driver.execute_script("arguments[0].click();", show_citation)
       except Exception as e:
+        if type_text == 'Journal article':
+          values = extract_articles_without_citation(driver, i, year_text)
+          values.insert(0, docente)
+          df_articles.loc[len(df_articles)] = values
+        else:
+          reporte.agregar_trabajo_sin_cita(nTrabajo=i, tipo_trabajo=type_text, año_trabajo=year_text, docente=docente)
+        
         driver.execute_script("arguments[0].click();", hide_details)
-        reporte.agregar_trabajo_sin_cita(nTrabajo=i, tipo_trabajo=type_text, año_trabajo=year_text, docente=docente)
         i = i+1
         continue
 
@@ -123,7 +133,6 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
             values.insert(0, docente)
             df_books.loc[len(df_books)] = values
           elif type_text == 'Book chapter' or ("title" in cita.text and "booktitle" in cita.text) :
-            # print(docente, '____________', cita.text)
             values = extract_chaptersBooks(cita.text)
             values.insert(0, docente)
             df_chaptersBooks.loc[len(df_chaptersBooks)] = values
@@ -135,8 +144,6 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
             values = extract_articles(cita.text)
             values.insert(0, docente)
             df_articles.loc[len(df_articles)] = values
-
-          # print(cita.text)
 
           break
         except Exception as e:
