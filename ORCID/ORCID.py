@@ -79,7 +79,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
 
         reporte.agregar_tipo_de_trabajo(type_text)
 
-        # if type_text != 'Journal article':
+        # if type_text != 'Book chapter':
         #   i = i+1
         #   continue
 
@@ -99,10 +99,16 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
         show_citation = driver.find_element(By.XPATH, f'//*[@id="cy-citation-toggle-link"]')
         driver.execute_script("arguments[0].click();", show_citation)
       except Exception as e:
+
+        #Extracción de información de elementos sin cita
         if type_text == 'Journal article':
           values = extract_articles_without_citation(driver, i, year_text)
           values.insert(0, docente)
           df_articles.loc[len(df_articles)] = values
+        elif type_text == 'Book chapter':
+          values = extract_chaptersBooks_without_citation(driver, i, year_text)
+          values.insert(0, docente)
+          df_chaptersBooks.loc[len(df_chaptersBooks)] = values
         else:
           reporte.agregar_trabajo_sin_cita(nTrabajo=i, tipo_trabajo=type_text, año_trabajo=year_text, docente=docente)
         
@@ -160,6 +166,7 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
 
   reporte.mostrar_resultados()
   driver.quit()
+
 
 def normalizar(cadena):
   # Convertir a minúsculas

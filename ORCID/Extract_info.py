@@ -77,7 +77,7 @@ def extract_articles_without_citation(driver, i, year):
     article.append(titulo.text)
   except Exception as e:
     article.append('')
-  
+
   # Extracción del nombre de la revista
   try:
     revista = driver.find_element(By.XPATH, f'//*[@id="cy-works-panels"]/div[2]/app-work-stack[{i}]/app-panel/div[2]/app-work/app-panel-data[1]/div/div[1]/div/div[1]')
@@ -87,7 +87,6 @@ def extract_articles_without_citation(driver, i, year):
 
   # Año
   article.append(year)
-
   # La mayoria no tiene mes, entonces no se agrega nada
   article.append('')
 
@@ -111,13 +110,10 @@ def extract_articles_without_citation(driver, i, year):
 
   # No hay editorial, entonces se deja en blanco
   article.append('')
-
   # No hay volumen, entonces se deja en blanco
   article.append('')
-
   # No hay numero, entonces se deja en blanco
   article.append('')
-
   # No hay paginas, entonces se deja en blanco
   article.append('')
 
@@ -131,14 +127,78 @@ def extract_articles_without_citation(driver, i, year):
   return article
 
 
+def extract_chaptersBooks_without_citation(driver, i, year):
+  booksChapter = []
+
+  # Extracción del DOI
+  try:
+    doi = driver.find_element(By.XPATH, f'//*[@id="cy-works-panels"]/div[2]/app-work-stack[{i}]/app-panel/div[2]/app-work/app-panel-data[1]/div/div[1]/div/app-display-external-ids/app-panel-data-line/div/a')
+    booksChapter.append(doi.text)
+  except Exception as e:
+    booksChapter.append('')
+
+  # Extracción de la URL
+  try:
+    url = driver.find_element(By.XPATH, f'//*[@id="cy-works-panels"]/div[2]/app-work-stack[{i}]/app-panel/div[2]/app-work/app-panel-data[2]/div/div[1]/app-display-attribute[1]/div/div[2]/div/a')
+    booksChapter.append(url.text)
+  except Exception as e:
+    booksChapter.append('')
+
+  # Año
+  booksChapter.append(year)
+  # No hay editorial, entonces se deja en blanco
+  booksChapter.append('')
+  # No hay paginas, entonces se deja en blanco
+  booksChapter.append('')
+
+  # Extracción de los autores
+  try:
+    autores = driver.find_element(By.XPATH, f'//*[@id="cy-works-panels"]/div[2]/app-work-stack[{i}]/app-panel/div[2]/app-work/app-panel-data[1]/div/div[1]/div/div[2]')
+    booksChapter.append(autores.text.replace('CONTRIBUTORS: ', ''))
+  except Exception as e:
+    booksChapter.append('')
+
+  # Extracción del nombre del capitulo
+  try:
+    nombre_del_capitulo = driver.find_element(By.XPATH, f'/html/body/app-root/div/div/app-my-orcid/main/div/div/div/app-main/section/app-work-stack-group/section/app-panels/div[2]/app-work-stack[{i}]/app-panel/div[1]/div[1]/h4')
+    booksChapter.append(nombre_del_capitulo.text)
+  except Exception as e:
+    booksChapter.append('')
+
+  # No hay nombre del libro, entonces se deja en blanco
+  booksChapter.append('')
+
+  return booksChapter
+
 # Quita cierto caracteres de un string
 def quitar_caracteres(text):
     replacements = {
         '{': '',
         '}': '',
-        "'": '',
-        "\\": '',
-        '~n': 'ñ'
+        '\\~N': 'Ñ',
+        '\\~n': 'ñ',
+        "\\'A": 'Á',
+        "\\'a": 'á',
+        "\\'E": 'É',
+        "\\'e": 'é',
+        "\\'I": 'Í',
+        "\\'i": 'í',
+        "\\'O": 'Ó',
+        "\\'o": 'ó',
+        "\\'U": 'Ú',
+        "\\'u": 'ú',
+        "\\'\\A": 'Á',
+        "\\'\\a": 'á',
+        "\\'\\E": 'É',
+        "\\'\\e": 'é',
+        "\\'\\I": 'Í',
+        "\\'\\i": 'í',
+        "\\'\\O": 'Ó',
+        "\\'\\o": 'ó',
+        "\\'\\U": 'Ú',
+        "\\'\\u": 'ú',
+        "?\\~a": 'çã',
+        "\\^a": 'â',
     }
     for key, value in replacements.items():
         text = text.replace(key, value)
