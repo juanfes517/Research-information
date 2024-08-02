@@ -44,6 +44,3 @@ def ORCID():
   df_capitulos_de_libros.to_csv('resultados/ORCID/capitulos_de_libros.csv', index=False)
   df_articulos_de_conferencia.to_csv('resultados/ORCID/articulos_de_conferencia.csv', index=False)
   df_articulos.to_csv('resultados/ORCID/articulos.csv', index=False)
-
-
-ORCID()

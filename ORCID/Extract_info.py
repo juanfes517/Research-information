@@ -1,7 +1,7 @@
 import bibtexparser
 from selenium.webdriver.common.by import By
 
-def extract_books(citation):
+def extract_book(citation):
   bib_database = bibtexparser.loads(citation)
 
   # Extract the information
@@ -16,7 +16,7 @@ def extract_books(citation):
     return [titulo, juournal, año, volumen, paginas, autores]
 
 
-def extract_chaptersBooks(citation):
+def extract_booksChapter(citation):
   bib_database = bibtexparser.loads(citation)
 
   # Extract the information
@@ -48,7 +48,7 @@ def extract_conferencePaper(citation):
     return [titulo, revista, año, volumen, paginas, autores]
 
 
-def extract_articles(citation):
+def extract_article(citation):
   bib_database = bibtexparser.loads(citation)
 
   # Extract the information
@@ -68,7 +68,7 @@ def extract_articles(citation):
     return [titulo, revista, año, mes, doi, url, editorial, volumen, numero, paginas, autores]
 
 
-def extract_articles_without_citation(driver, i, year):
+def extract_article_without_citation(driver, i, year):
   article = []
 
   # Extracción del titulo
@@ -127,7 +127,7 @@ def extract_articles_without_citation(driver, i, year):
   return article
 
 
-def extract_chaptersBooks_without_citation(driver, i, year):
+def extract_booksChapter_without_citation(driver, i, year):
   booksChapter = []
 
   # Extracción del DOI

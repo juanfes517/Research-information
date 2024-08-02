@@ -34,14 +34,14 @@ class Report:
     print('Los siguientes docentes no fueron encontrados en la busqueda \no no tienen la Universidad de Antioquia como afiliación\n')
     for docente in self.docentes_no_encontrados:
       print('-',docente)
-    print('____________________________________________________________\n\n\n')
+    print('____________________________________________________________\n\n')
 
     # Reporte de tipos de trabajo
     print('____________________________________________________________')
     print('Tipos de trabajo')
     for tipo in np.unique(self.tipos_de_trabajos):
       print('-', tipo)
-    print('____________________________________________________________\n\n\n')
+    print('____________________________________________________________\n\n')
 
     # Reporte de citas no valida
     print('____________________________________________________________')
@@ -49,7 +49,7 @@ class Report:
     print('Lo siguientes trabajos no tienen el botón "Switch to expanded formatting"\nnecesario para obtener un XPATH valido')
     for cita_no_valida in self.citas_no_validas:
       print('-', cita_no_valida)
-    print('____________________________________________________________\n\n\n')
+    print('____________________________________________________________\n\n')
 
     # Reporte de errores al obtener cita
     print('____________________________________________________________')
@@ -57,7 +57,7 @@ class Report:
     print('Los siguientes trabajos no tienen un XPATH valido o en el rango indicado (1 a 5)')
     for error_en_cita in self.errores_en_cita:
       print('-', error_en_cita)
-    print('____________________________________________________________\n\n\n')
+    print('____________________________________________________________\n\n')
 
     # Reporte de trabajos sin cita
     print('____________________________________________________________')
@@ -65,4 +65,4 @@ class Report:
     print('Los siguientes trabajos no tienen cita')
     for trabajo_sin_citas in self.trabajos_sin_citas:
       print('-', trabajo_sin_citas)
-    print('____________________________________________________________\n\n\n')
+    print('____________________________________________________________\n\n')

@@ -102,11 +102,11 @@ def scrape_ORCID(df_libros, df_capitulos_de_libros, df_articulos_de_conferencia,
 
         #Extracción de información de elementos sin cita
         if type_text == 'Journal article':
-          values = extract_articles_without_citation(driver, i, year_text)
+          values = extract_article_without_citation(driver, i, year_text)
           values.insert(0, docente)
           df_articulos.loc[len(df_articulos)] = values
         elif type_text == 'Book chapter':
-          values = extract_chaptersBooks_without_citation(driver, i, year_text)
+          values = extract_booksChapter_without_citation(driver, i, year_text)
           values.insert(0, docente)
           df_capitulos_de_libros.loc[len(df_capitulos_de_libros)] = values
         else:
@@ -135,11 +135,11 @@ def scrape_ORCID(df_libros, df_capitulos_de_libros, df_articulos_de_conferencia,
           cita = driver.find_element(By.XPATH, xpath)
 
           if type_text == 'Book':
-            values = extract_books(cita.text)
+            values = extract_book(cita.text)
             values.insert(0, docente)
             df_libros.loc[len(df_libros)] = values
           elif type_text == 'Book chapter' or ("title" in cita.text and "booktitle" in cita.text) :
-            values = extract_chaptersBooks(cita.text)
+            values = extract_booksChapter(cita.text)
             values.insert(0, docente)
             df_capitulos_de_libros.loc[len(df_capitulos_de_libros)] = values
           elif type_text == 'Conference paper':
@@ -147,7 +147,7 @@ def scrape_ORCID(df_libros, df_capitulos_de_libros, df_articulos_de_conferencia,
             values.insert(0, docente)
             df_articulos_de_conferencia.loc[len(df_articulos_de_conferencia)] = values
           elif type_text == 'Journal article':
-            values = extract_articles(cita.text)
+            values = extract_article(cita.text)
             values.insert(0, docente)
             df_articulos.loc[len(df_articulos)] = values
 
