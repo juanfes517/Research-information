@@ -3,9 +3,10 @@ from docentes import docentes
 from CvLAC.CvLAC import scrape_CvLAC
 from ORCID.ORCID import scrape_ORCID
 from data_manager.proyectos import tratar_proyectos
+from data_manager.libros import tratar_libros
 
 def main():
-  tratar_proyectos()
+  tratar_libros()
 
 def CvLAC():
   df_proyectos = pd.DataFrame(columns=["docente", "tipo_de_proyecto", "nombre_del_proyecto", "inicio", "fin", "resumen"])
