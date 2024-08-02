@@ -2,6 +2,10 @@ import pandas as pd
 from docentes import docentes
 from CvLAC.CvLAC import scrape_CvLAC
 from ORCID.ORCID import scrape_ORCID
+from data_manager.proyectos import tratar_proyectos
+
+def main():
+  tratar_proyectos()
 
 def CvLAC():
   df_proyectos = pd.DataFrame(columns=["docente", "tipo_de_proyecto", "nombre_del_proyecto", "inicio", "fin", "resumen"])
@@ -14,9 +18,9 @@ def CvLAC():
     df_capitulos_de_libros=df_capitulos_de_libros,
     docentes=docentes)
 
-  df_proyectos.to_csv('resultados/CvLAC/proyectos.csv', index=False)
-  df_articulos.to_csv('resultados/CvLAC/articulos.csv', index=False)
-  df_capitulos_de_libros.to_csv('resultados/CvLAC/capitulos_de_libros.csv', index=False)
+  df_proyectos.to_csv('resultados/sin_tratar/CvLAC/proyectos.csv', index=False)
+  df_articulos.to_csv('resultados/sin_tratar/CvLAC/articulos.csv', index=False)
+  df_capitulos_de_libros.to_csv('resultados/sin_tratar/CvLAC/capitulos_de_libros.csv', index=False)
 
 # Capitulos de libros de ambas paginas
 # ["docente", "nombre_del_capitulo", "nombre_del_libro", "pais", "año", "editorial", "paginas", "ISBN"]
@@ -40,7 +44,11 @@ def ORCID():
     df_articulos = df_articulos, 
     docentes=docentes)
 
-  df_libros.to_csv('resultados/ORCID/libros.csv', index=False)
-  df_capitulos_de_libros.to_csv('resultados/ORCID/capitulos_de_libros.csv', index=False)
-  df_articulos_de_conferencia.to_csv('resultados/ORCID/articulos_de_conferencia.csv', index=False)
-  df_articulos.to_csv('resultados/ORCID/articulos.csv', index=False)
+  df_libros.to_csv('resultados/sin_tratar/ORCID/libros.csv', index=False)
+  df_capitulos_de_libros.to_csv('resultados/sin_tratar/ORCID/capitulos_de_libros.csv', index=False)
+  df_articulos_de_conferencia.to_csv('resultados/sin_tratar/ORCID/articulos_de_conferencia.csv', index=False)
+  df_articulos.to_csv('resultados/sin_tratar/ORCID/articulos.csv', index=False)
+
+
+if __name__ == "__main__":
+  main()
