@@ -2,11 +2,12 @@ import pandas as pd
 from docentes import docentes
 from CvLAC.CvLAC import scrape_CvLAC
 from ORCID.ORCID import scrape_ORCID
-from data_manager.proyectos import tratar_proyectos
 from data_manager.libros import tratar_libros
+from data_manager.proyectos import tratar_proyectos
+from data_manager.articulos_de_conferencia import tratar_articulos_de_conferencia
 
 def main():
-  tratar_libros()
+  tratar_articulos_de_conferencia()
 
 def CvLAC():
   df_proyectos = pd.DataFrame(columns=["docente", "tipo_de_proyecto", "nombre_del_proyecto", "inicio", "fin", "resumen"])
@@ -35,7 +36,7 @@ def ORCID():
 
   df_libros = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "volumen", "paginas", "autores"])
   df_capitulos_de_libros = pd.DataFrame(columns=["docente", "DOI", "URL", "año", "editorial", "paginas", "autores", "nombre_del_capitulo", "nombre_del_libro"])
-  df_articulos_de_conferencia = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "volumen", "paginas", "auntores"])
+  df_articulos_de_conferencia = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "volumen", "paginas", "autores"])
   df_articulos = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "mes", "DOI", "URL", "editorial", "volumen", "numero", "paginas", "autores"])
 
   scrape_ORCID(

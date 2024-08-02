@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 
+# En este método solo se estan eliminando los registros con una año menor a 2019 del dataset de libros.
 def tratar_libros():
   ruta_csv = os.path.join(os.path.dirname(__file__), '../resultados/sin_tratar/ORCID/libros.csv')
   df_libros = pd.read_csv(ruta_csv)
