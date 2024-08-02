@@ -4,35 +4,46 @@ from CvLAC.CvLAC import scrape_CvLAC
 from ORCID.ORCID import scrape_ORCID
 
 def CvLAC():
-  df_projects = pd.DataFrame(columns=["Docente", "Tipo_de_proyecto", "Nombre_del_proyecto", "Inicio", "Fin", "Resumen"])
-  df_articles = pd.DataFrame(columns=["Docente", "Titulo_del_articulo", "pais", "revista", "año_de_publicacion", "paginas", "editorial", "DOI", "ISSN"])
-  df_chaptersBooks = pd.DataFrame(columns=["Docente", "nombre_del_capitulo", "nombre_del_libro", "pais", "año", "editorial", "paginas", "ISBN"])
+  df_proyectos = pd.DataFrame(columns=["docente", "tipo_de_proyecto", "nombre_del_proyecto", "inicio", "fin", "resumen"])
+  df_articulos = pd.DataFrame(columns=["docente", "titulo", "pais", "revista", "año", "paginas", "editorial", "DOI", "ISSN"])
+  df_capitulos_de_libros = pd.DataFrame(columns=["docente", "nombre_del_capitulo", "nombre_del_libro", "pais", "año", "editorial", "paginas", "ISBN"])
 
-  scrape_CvLAC(df_projects=df_projects, df_articles=df_articles, df_chaptersBooks=df_chaptersBooks, docentes=docentes)
+  scrape_CvLAC(
+    df_proyectos=df_proyectos,
+    df_articulos=df_articulos,
+    df_capitulos_de_libros=df_capitulos_de_libros,
+    docentes=docentes)
 
-  df_projects.to_csv('resultados/CvLAC/projects.csv', index=False)
-  df_articles.to_csv('resultados/CvLAC/articles.csv', index=False)
-  df_chaptersBooks.to_csv('resultados/CvLAC/chaptersBooks.csv', index=False)
+  df_proyectos.to_csv('resultados/CvLAC/proyectos.csv', index=False)
+  df_articulos.to_csv('resultados/CvLAC/articulos.csv', index=False)
+  df_capitulos_de_libros.to_csv('resultados/CvLAC/capitulos_de_libros.csv', index=False)
 
+# Capitulos de libros de ambas paginas
+# ["docente", "nombre_del_capitulo", "nombre_del_libro", "pais", "año", "editorial", "paginas", "ISBN"]
+# ["docente", "DOI", "URL", "año", "editorial", "paginas", "autores", "nombre_del_capitulo", "nombre_del_libro"]
+
+# Articulos de ambas paginas
+# ["docente", "titulo", "pais", "revista", "año", "paginas", "editorial", "DOI", "ISSN"]
+# ["docente", "titulo", "revista", "año", "mes", "DOI", "URL", "editorial", "volumen", "numero", "paginas", "autores"]
 
 def ORCID():
 
-  df_books = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "volumen", "paginas", "autores"])
-  df_chaptersBooks = pd.DataFrame(columns=["docente", "DOI", "URL", "año", "editorial", "paginas", "autores", "nombre_del_capitulo", "nombre_del_libro"])
-  df_conferencePaper = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "volumen", "paginas", "auntores"])
-  df_articles = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "mes", "DOI", "URL", "editorial", "volumen", "numero", "paginas", "autores"])
+  df_libros = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "volumen", "paginas", "autores"])
+  df_capitulos_de_libros = pd.DataFrame(columns=["docente", "DOI", "URL", "año", "editorial", "paginas", "autores", "nombre_del_capitulo", "nombre_del_libro"])
+  df_articulos_de_conferencia = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "volumen", "paginas", "auntores"])
+  df_articulos = pd.DataFrame(columns=["docente", "titulo", "revista", "año", "mes", "DOI", "URL", "editorial", "volumen", "numero", "paginas", "autores"])
 
   scrape_ORCID(
-    df_books=df_books, 
-    df_chaptersBooks=df_chaptersBooks, 
-    df_conferencePaper=df_conferencePaper,
-    df_articles = df_articles, 
+    df_libros=df_libros, 
+    df_capitulos_de_libros=df_capitulos_de_libros, 
+    df_articulos_de_conferencia=df_articulos_de_conferencia,
+    df_articulos = df_articulos, 
     docentes=docentes)
 
-  df_books.to_csv('resultados/ORCID/books.csv', index=False)
-  df_chaptersBooks.to_csv('resultados/ORCID/chaptersBooks.csv', index=False)
-  df_conferencePaper.to_csv('resultados/ORCID/conferencePaper.csv', index=False)
-  df_articles.to_csv('resultados/ORCID/articles.csv', index=False)
+  df_libros.to_csv('resultados/ORCID/libros.csv', index=False)
+  df_capitulos_de_libros.to_csv('resultados/ORCID/capitulos_de_libros.csv', index=False)
+  df_articulos_de_conferencia.to_csv('resultados/ORCID/articulos_de_conferencia.csv', index=False)
+  df_articulos.to_csv('resultados/ORCID/articulos.csv', index=False)
 
 
 ORCID()

@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-def scrape_CvLAC(df_projects, df_articles, df_chaptersBooks, docentes):
+def scrape_CvLAC(df_proyectos, df_articulos, df_capitulos_de_libros, docentes):
 
   # Inicializa el driver de Chrome
   service = Service(ChromeDriverManager().install())
@@ -52,7 +52,7 @@ def scrape_CvLAC(df_projects, df_articles, df_chaptersBooks, docentes):
         proyecto = driver.find_element(By.XPATH, xpath)
         values = getValuesProjects(proyecto.text)
         values.insert(0, docente)
-        df_projects.loc[len(df_projects)] = values
+        df_proyectos.loc[len(df_proyectos)] = values
         i = i+1
       except Exception  as e:
         break
@@ -65,7 +65,7 @@ def scrape_CvLAC(df_projects, df_articles, df_chaptersBooks, docentes):
         articulo = driver.find_element(By.XPATH, xpath)
         values = getValuesArticles(articulo.text)
         values.insert(0, docente)
-        df_articles.loc[len(df_articles)] = values
+        df_articulos.loc[len(df_articulos)] = values
         i = i+2
       except Exception  as e:
         break
@@ -78,7 +78,7 @@ def scrape_CvLAC(df_projects, df_articles, df_chaptersBooks, docentes):
         chapter = driver.find_element(By.XPATH, xpath)
         values = getValuesChapters(chapter.text)
         values.insert(0, docente)
-        df_chaptersBooks.loc[len(df_chaptersBooks)] = values
+        df_capitulos_de_libros.loc[len(df_capitulos_de_libros)] = values
         i = i+1
       except Exception  as e:
         break

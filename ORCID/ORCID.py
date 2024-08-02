@@ -10,7 +10,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, docentes):
+def scrape_ORCID(df_libros, df_capitulos_de_libros, df_articulos_de_conferencia, df_articulos, docentes):
   # Inicializa el driver de Chrome
   service = Service(ChromeDriverManager().install())
   driver = webdriver.Chrome(service=service)
@@ -104,11 +104,11 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
         if type_text == 'Journal article':
           values = extract_articles_without_citation(driver, i, year_text)
           values.insert(0, docente)
-          df_articles.loc[len(df_articles)] = values
+          df_articulos.loc[len(df_articulos)] = values
         elif type_text == 'Book chapter':
           values = extract_chaptersBooks_without_citation(driver, i, year_text)
           values.insert(0, docente)
-          df_chaptersBooks.loc[len(df_chaptersBooks)] = values
+          df_capitulos_de_libros.loc[len(df_capitulos_de_libros)] = values
         else:
           reporte.agregar_trabajo_sin_cita(nTrabajo=i, tipo_trabajo=type_text, año_trabajo=year_text, docente=docente)
         
@@ -137,19 +137,19 @@ def scrape_ORCID(df_books, df_chaptersBooks, df_conferencePaper, df_articles, do
           if type_text == 'Book':
             values = extract_books(cita.text)
             values.insert(0, docente)
-            df_books.loc[len(df_books)] = values
+            df_libros.loc[len(df_libros)] = values
           elif type_text == 'Book chapter' or ("title" in cita.text and "booktitle" in cita.text) :
             values = extract_chaptersBooks(cita.text)
             values.insert(0, docente)
-            df_chaptersBooks.loc[len(df_chaptersBooks)] = values
+            df_capitulos_de_libros.loc[len(df_capitulos_de_libros)] = values
           elif type_text == 'Conference paper':
             values = extract_conferencePaper(cita.text)
             values.insert(0, docente)
-            df_conferencePaper.loc[len(df_conferencePaper)] = values
+            df_articulos_de_conferencia.loc[len(df_articulos_de_conferencia)] = values
           elif type_text == 'Journal article':
             values = extract_articles(cita.text)
             values.insert(0, docente)
-            df_articles.loc[len(df_articles)] = values
+            df_articulos.loc[len(df_articulos)] = values
 
           break
         except Exception as e:
