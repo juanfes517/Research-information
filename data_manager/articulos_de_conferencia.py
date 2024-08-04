@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 
+# En este método solo se estan eliminando los registros con un año menor a 2019 del dataset de articulos de conferencia.
 def tratar_articulos_de_conferencia():
   ruta_csv = os.path.join(os.path.dirname(__file__), '../resultados/sin_tratar/ORCID/articulos_de_conferencia.csv')
   df_articulos_de_conferencia = pd.read_csv(ruta_csv)
@@ -12,5 +13,3 @@ def tratar_articulos_de_conferencia():
   df_articulos_de_conferencia = df_articulos_de_conferencia.reset_index(drop=True)
 
   df_articulos_de_conferencia.to_csv('resultados/tratados/articulos_de_conferencia.csv', index=False)
-
-  # print(df_articulos_de_conferencia['año'])
