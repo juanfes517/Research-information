@@ -25,14 +25,14 @@ def tratar_capitulos_de_libros():
 
   # Rellenar valores vacíos con los valores del otro DataFrame
   for col in df_capitulos_de_libros_orcid.columns:
-      if col in df_capitulos_de_libros_cvlac.columns and col not in ['docente', 'nombre_del_capitulo']:
-          df_capitulos_de_libros[col] = df_capitulos_de_libros[f"{col}_left"].combine_first(df_capitulos_de_libros[f"{col}_right"])
-          df_capitulos_de_libros.drop(columns=[f"{col}_left", f"{col}_right"], inplace=True)
+    if col in df_capitulos_de_libros_cvlac.columns and col not in ['docente', 'nombre_del_capitulo']:
+      df_capitulos_de_libros[col] = df_capitulos_de_libros[f"{col}_left"].combine_first(df_capitulos_de_libros[f"{col}_right"])
+      df_capitulos_de_libros.drop(columns=[f"{col}_left", f"{col}_right"], inplace=True)
 
   # Seleccionar las columnas únicas
   for col in df_capitulos_de_libros_cvlac.columns:
-      if col not in df_capitulos_de_libros_orcid.columns:
-          df_capitulos_de_libros[col] = df_capitulos_de_libros[col].combine_first(df_capitulos_de_libros[col])
+    if col not in df_capitulos_de_libros_orcid.columns:
+      df_capitulos_de_libros[col] = df_capitulos_de_libros[col].combine_first(df_capitulos_de_libros[col])
 
   # Reordenar las columnas
   final_columns = ['docente', 'nombre_del_capitulo', 'nombre_del_libro', 'pais', 'año', 'editorial', 'paginas', 'ISBN', 'DOI', 'URL', 'autores']

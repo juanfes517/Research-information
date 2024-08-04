@@ -16,4 +16,6 @@
   pip install webdriver-manager
   pip install pandas
   pip install bibtexparser
+  pip install scikit-learn
+  pip install numpy
   ```

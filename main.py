@@ -5,11 +5,37 @@ from ORCID.ORCID import scrape_ORCID
 from data_manager.libros import tratar_libros
 from data_manager.articulos import tratar_articulos
 from data_manager.proyectos import tratar_proyectos
+from scimago_journal.scimagojr import scrape_scimagojr
 from data_manager.capitulos_de_libros import tratar_capitulos_de_libros
 from data_manager.articulos_de_conferencia import tratar_articulos_de_conferencia
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import Levenshtein
+
 def main():
-  tratar_capitulos_de_libros()
+  Scimagojr()
+
+def jaccard_similarity(text1, text2):
+    set1 = set(text1.split())
+    set2 = set(text2.split())
+    intersection = set1.intersection(set2)
+    union = set1.union(set2)
+    return len(intersection) / len(union) * 100
+
+
+
+def Scimagojr():
+  df_articulos_de_conferencia = pd.read_csv('resultados/tratados/articulos_de_conferencia.csv')
+  df_articulos = pd.read_csv('resultados/tratados/articulos.csv')
+
+  scrape_scimagojr(
+    df_articulos_de_conferencia=df_articulos_de_conferencia,
+    df_articulos=df_articulos
+  )
+
+  df_articulos_de_conferencia.to_csv('resultados/tratados/articulos_de_conferencia.csv', index=False)
+  df_articulos.to_csv('resultados/tratados/articulos.csv', index=False)
 
 def CvLAC():
   df_proyectos = pd.DataFrame(columns=["docente", "tipo_de_proyecto", "nombre_del_proyecto", "inicio", "fin", "resumen"])
@@ -25,14 +51,6 @@ def CvLAC():
   df_proyectos.to_csv('resultados/sin_tratar/CvLAC/proyectos.csv', index=False)
   df_articulos.to_csv('resultados/sin_tratar/CvLAC/articulos.csv', index=False)
   df_capitulos_de_libros.to_csv('resultados/sin_tratar/CvLAC/capitulos_de_libros.csv', index=False)
-
-# Capitulos de libros de ambas paginas
-# ["docente", "nombre_del_capitulo", "nombre_del_libro", "pais", "año", "editorial", "paginas", "ISBN"]
-# ["docente", "DOI", "URL", "año", "editorial", "paginas", "autores", "nombre_del_capitulo", "nombre_del_libro"]
-
-# Articulos de ambas paginas
-# ["docente", "titulo", "pais", "revista", "año", "paginas", "editorial", "DOI", "ISSN"]
-# ["docente", "titulo", "revista", "año", "mes", "DOI", "URL", "editorial", "volumen", "numero", "paginas", "autores"]
 
 def ORCID():
 

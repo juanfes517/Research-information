@@ -1,1 +1,6 @@
 env/
+
+__pycache__/
+CvLAC/__pycache__/
+data_manager/__pycache__/
+ORCID/__pycache__/

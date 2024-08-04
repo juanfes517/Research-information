@@ -18,9 +18,12 @@ def scrape_ORCID(df_libros, df_capitulos_de_libros, df_articulos_de_conferencia,
   # Abre el navegador con la URL
   driver.get('https://orcid.org/')
 
+  sleep(3)
+
   # Cierra la ventana emergente de cookies
   cookies = driver.find_element(By.XPATH, '//*[@id="onetrust-close-btn-container"]/button')
   cookies.click()
+
 
   reporte = Report()
 
