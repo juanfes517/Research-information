@@ -9,21 +9,15 @@ from scimago_journal.scimagojr import scrape_scimagojr
 from data_manager.capitulos_de_libros import tratar_capitulos_de_libros
 from data_manager.articulos_de_conferencia import tratar_articulos_de_conferencia
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 import Levenshtein
 
 def main():
   Scimagojr()
 
-def jaccard_similarity(text1, text2):
-    set1 = set(text1.split())
-    set2 = set(text2.split())
-    intersection = set1.intersection(set2)
-    union = set1.union(set2)
-    return len(intersection) / len(union) * 100
-
-
+def levenshtein_similarity(text1, text2):
+  distance = Levenshtein.distance(text1, text2)
+  max_len = max(len(text1), len(text2))
+  return (1 - distance / max_len) * 100
 
 def Scimagojr():
   df_articulos_de_conferencia = pd.read_csv('resultados/tratados/articulos_de_conferencia.csv')
@@ -34,8 +28,8 @@ def Scimagojr():
     df_articulos=df_articulos
   )
 
-  df_articulos_de_conferencia.to_csv('resultados/tratados/articulos_de_conferencia.csv', index=False)
-  df_articulos.to_csv('resultados/tratados/articulos.csv', index=False)
+  # df_articulos_de_conferencia.to_csv('resultados/tratados/articulos_de_conferencia.csv', index=False)
+  # df_articulos.to_csv('resultados/tratados/articulos.csv', index=False)
 
 def CvLAC():
   df_proyectos = pd.DataFrame(columns=["docente", "tipo_de_proyecto", "nombre_del_proyecto", "inicio", "fin", "resumen"])

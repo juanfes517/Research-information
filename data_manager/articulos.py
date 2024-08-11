@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 
+# En este método se esta juntando en un solo dataset los artículos obtenidos en las paginas de ORCID y CvLAC
 def tratar_articulos():
   ruta_orcid = os.path.join(os.path.dirname(__file__), '../resultados/sin_tratar/ORCID/articulos.csv')
   ruta_cvlac = os.path.join(os.path.dirname(__file__), '../resultados/sin_tratar/CvLAC/articulos.csv')
@@ -8,19 +9,19 @@ def tratar_articulos():
   df_articulos_orcid = pd.read_csv(ruta_orcid)
   df_articulos_cvlac = pd.read_csv(ruta_cvlac)
 
+  # Se llenan los datos nulos de la columna "año" con ceros
   df_articulos_orcid['año'] = df_articulos_orcid['año'].fillna(0)
-  df_articulos_orcid['año'] = df_articulos_orcid['año'].astype(int)
+  df_articulos_cvlac['año'] = df_articulos_cvlac['año'].fillna(0)
 
-  # Se eliminan los registros con una año menor a 2019
-  df_articulos_orcid = df_articulos_orcid[df_articulos_orcid['año'] >= 2019]
-  df_articulos_orcid = df_articulos_orcid.reset_index(drop=True)
-  df_articulos_cvlac = df_articulos_cvlac[df_articulos_cvlac['año'] >= 2019]
-  df_articulos_cvlac = df_articulos_cvlac.reset_index(drop=True)
+  # cambio de caracteres y eliminación de puntos al final del nombre del capitulo
+  df_articulos_orcid['titulo'] = df_articulos_orcid['titulo'].str.rstrip(' ')
+  df_articulos_orcid['titulo'] = df_articulos_orcid['titulo'].str.rstrip('.')
+  df_articulos_orcid['titulo'] = df_articulos_orcid['titulo'].str.replace('’', "'")
+  df_articulos_cvlac['titulo'] = df_articulos_cvlac['titulo'].str.rstrip(' ')
+  df_articulos_cvlac['titulo'] = df_articulos_cvlac['titulo'].str.rstrip('.')
+  df_articulos_cvlac['titulo'] = df_articulos_cvlac['titulo'].str.replace('’', "'")
 
-  titulo_orcid = df_articulos_orcid['titulo'].tolist()
-  titulo_cvlac = df_articulos_cvlac['titulo'].tolist()
-
-  # Convertir los títulos a minúsculas
+  # Convertir los títulos a mayúsculas
   df_articulos_orcid['titulo'] = df_articulos_orcid['titulo'].str.upper()
   df_articulos_cvlac['titulo'] = df_articulos_cvlac['titulo'].str.upper()
 
@@ -42,6 +43,7 @@ def tratar_articulos():
   final_columns = ['docente', 'titulo', 'pais', 'revista', 'año', 'mes', 'paginas', 'editorial', 'DOI', 'ISSN', 'URL', 'volumen', 'numero', 'autores']
   df_articulos = df_articulos[final_columns]
 
+  # Transformación del tipo de la columna "año"
   df_articulos['año'] = df_articulos['año'].astype(int)
 
   df_articulos.to_csv('resultados/tratados/articulos.csv', index=False)

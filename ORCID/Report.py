@@ -28,7 +28,7 @@ class Report:
     self.errores_en_cita = np.append(self.errores_en_cita, error_en_cita)
 
   def mostrar_resultados(self):
-    # Reporte de doncentes no encontrados
+    # Reporte de docentes no encontrados
     print('____________________________________________________________')
     print('Docentes no encontrados')
     print('Los siguientes docentes no fueron encontrados en la busqueda \no no tienen la Universidad de Antioquia como afiliación\n')

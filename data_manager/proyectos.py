@@ -1,9 +1,8 @@
 import os
 import pandas as pd
 
-# En este método se le esta aplicando lo siguiente al dataset 'proyectos':
-# 1. Tanto la columna 'inicio' y 'fin' tienen este formato 'mes  año', por lo tanto, se estan separando en columnas difentes
-# 2. Se estan eliminando los datos con una año de fin menor a 2019.
+# Tanto la columna 'inicio' y 'fin' tienen este formato <mes  año>, por lo tanto, 
+# con este método, se estan separando en columnas difentes
 def tratar_proyectos():
 
   ruta_csv = os.path.join(os.path.dirname(__file__), '../resultados/sin_tratar/CvLAC/proyectos.csv')
@@ -41,9 +40,6 @@ def tratar_proyectos():
   df_proyectos['año_inicio'] = pd.to_numeric(año_inicio)
   df_proyectos['mes_fin'] = mes_fin
   df_proyectos['año_fin'] = pd.to_numeric(año_fin)
-
-  df_proyectos = df_proyectos[df_proyectos['año_fin'] >= 2019]
-  df_proyectos = df_proyectos.reset_index(drop=True)
 
   df_proyectos.to_csv('resultados/tratados/proyectos.csv', index=False)
 

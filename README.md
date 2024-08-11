@@ -18,4 +18,5 @@
   pip install bibtexparser
   pip install scikit-learn
   pip install numpy
+  pip install Levenshtein
   ```
