@@ -14,6 +14,18 @@ import Levenshtein
 def main():
   Scimagojr()
 
+  # text1 = 'ICASSP, IEEE International Conference on Acoustics, Speech and Signal Processing - Proceedings'
+  # text2 = 'Proceedings - ICASSP, IEEE International Conference on Acoustics, Speech and Signal Processing'
+  
+  # text1 = '2015 20th symposium on signal processing images and computer vision stsiva'
+  # text2 = '2015 20th Symposium on Signal Processing, Images and Computer Vision, STSIVA 2015 - Conference Proceedings'
+  
+  # text1 = 'Physical Review B'
+  # text2 = 'PHYSICAL REVIEW D'
+  
+  # score = levenshtein_similarity(text1.lower(), text2.lower())
+  # print(score)
+
 def levenshtein_similarity(text1, text2):
   distance = Levenshtein.distance(text1, text2)
   max_len = max(len(text1), len(text2))
@@ -28,8 +40,8 @@ def Scimagojr():
     df_articulos=df_articulos
   )
 
-  # df_articulos_de_conferencia.to_csv('resultados/tratados/articulos_de_conferencia.csv', index=False)
-  # df_articulos.to_csv('resultados/tratados/articulos.csv', index=False)
+  df_articulos_de_conferencia.to_csv('resultados/tratados/articulos_de_conferencia.csv', index=False)
+  df_articulos.to_csv('resultados/tratados/articulos.csv', index=False)
 
 def CvLAC():
   df_proyectos = pd.DataFrame(columns=["docente", "tipo_de_proyecto", "nombre_del_proyecto", "inicio", "fin", "resumen"])
